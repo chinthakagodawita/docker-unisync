@@ -6,7 +6,10 @@ import (
   "flag"
 )
 
-var version string
+var (
+  Version string
+  Build string
+)
 
 func main() {
   pwd, err := os.Getwd()
@@ -18,8 +21,8 @@ func main() {
   // Setup usage arguments and options.
   cmdName := "docker-unisync"
   flag.Usage = func() {
-    fmt.Fprintf(os.Stderr, "Example usage:\n\t%v [options] DOCKER-MACHINE-NAME...\n", cmdName)
-    fmt.Print("\nOptions:\n")
+    fmt.Printf("Example usage:\n\t%v [options] DOCKER-MACHINE-NAME...", cmdName)
+    fmt.Println("\nOptions:")
     flag.PrintDefaults()
   }
 
@@ -30,7 +33,7 @@ func main() {
   flag.Parse()
 
   if *showVersion {
-    fmt.Println(cmdName, version)
+    fmt.Printf("%v version %v, build %v\n", cmdName, Version, Build)
     return
   }
 
