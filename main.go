@@ -3,22 +3,25 @@ package main
 import (
 	// "flag"
 	"fmt"
-	"github.com/fatih/color"
-	"gopkg.in/alecthomas/kingpin.v2"
+	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/fatih/color"
+	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/gopkg.in/alecthomas/kingpin.v2"
 	"os"
 )
 
 var (
-	Version     string
-	Build       string
-	pwd, pwdErr = os.Getwd()
-	verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
-	dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Required().String()
-	source      = kingpin.Flag("source", "Source folder to sync.").Short('s').Default(pwd).String()
-	machineName = kingpin.Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").Required().String()
+	Version string
+	Build   string
 )
 
 func main() {
+	var (
+		pwd, pwdErr = os.Getwd()
+		verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
+		dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Required().String()
+		source      = kingpin.Flag("source", "Source folder to sync.").Short('s').Default(pwd).String()
+		machineName = kingpin.Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").Required().String()
+	)
+
 	if pwdErr != nil {
 		color.Set(color.FgRed)
 		fmt.Println("Error: could not determine your current directory: ", pwdErr)
@@ -31,6 +34,11 @@ func main() {
 	kingpin.Parse()
 
 	os.Exit(0)
+
+	fmt.Println(verbose)
+	fmt.Println(dest)
+	fmt.Println(source)
+	fmt.Println(machineName)
 
 	// app := cli.NewApp()
 	// app.Name = "docker-unisync"
