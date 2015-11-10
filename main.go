@@ -2,10 +2,10 @@ package main
 
 import (
 	// "flag"
-	"fmt"
-	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/fatih/color"
+	"bytes"
 	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/gopkg.in/alecthomas/kingpin.v2"
 	"os"
+	"os/exec"
 )
 
 var (
@@ -14,97 +14,60 @@ var (
 )
 
 func main() {
+	pwd, pwdErr := os.Getwd()
+	if pwdErr != nil {
+		LogError("could not determine your current directory: " + pwdErr.Error())
+	}
+
 	var (
-		pwd, pwdErr = os.Getwd()
-		verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
-		dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Required().String()
+		// verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
+		dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Default(pwd).String()
 		source      = kingpin.Flag("source", "Source folder to sync.").Short('s').Default(pwd).String()
 		machineName = kingpin.Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").Required().String()
 	)
 
-	if pwdErr != nil {
-		color.Set(color.FgRed)
-		fmt.Println("Error: could not determine your current directory: ", pwdErr)
-		color.Unset()
-		os.Exit(1)
-	}
-
+	// Setup '-h' as an alias for the help flag.
 	kingpin.CommandLine.HelpFlag.Short('h')
 
 	kingpin.Parse()
 
-	os.Exit(0)
+	// Check for `unison`.
+	unisonPath, unisonPathErr := exec.LookPath("unison")
+	if unisonPathErr != nil {
+		LogError("could not find `unison`, is it installed?", "See git.io/someurl for information on how to install it.")
+	}
 
-	fmt.Println(verbose)
-	fmt.Println(dest)
-	fmt.Println(source)
-	fmt.Println(machineName)
+	unisonCmd := exec.Command("unison", "-batch", "-ignore=Name {.git*,.vagrant/,*.DS_Store}", "-sshargs", "-o StrictHostKeyChecking=no", "-i asd", *source)
+	var unisonOut bytes.Buffer
+	unisonCmd.Stdout = &unisonOut
+	unisonErr := unisonCmd.Run()
+	if unisonErr != nil {
+		LogError("could not run `unison`: " + unisonErr.Error())
+	}
 
-	// app := cli.NewApp()
-	// app.Name = "docker-unisync"
-	// app.Usage = fmt.Sprintf("Unison-based mounts for your boot2docker docker-machine.")
-	// app.Version = fmt.Sprintf("%v-%v", Version, Build)
-	// app.ArgsUsage = "DOCKER-MACHINE-NAME..."
-	// app.HideHelp = true
+	LogDebug("Out:", unisonOut.String())
 
-	// app.Flags = []cli.Flag{
-	// 	cli.BoolFlag{
-	// 		Name:  "help, h",
-	// 		Usage: "show help",
-	// 	},
-	// }
-
-	// // app.Action = func(c *cli.Context) {
-	// // 	if len(c.Args()) != 1 {
-	// // 		color.Red("A Docker Machine name is required, see `docker-unisync help`.")
-	// // 		os.Exit(1)
-	// // 	}
-
-	// // 	fmt.Println("yooo")
-	// // }
-
-	// app.Run(os.Args)
-
-	// pwd, err := os.Getwd()
-	// if err != nil {
-	// 	color.Set(color.FgRed)
-	// 	fmt.Println("Error: could not determine your current directory: ", err)
-	// 	color.Unset()
-	// 	os.Exit(1)
-	// }
-
-	// // Setup usage arguments and options.
-	// cmdName := "docker-unisync"
-	// flag.Usage = func() {
-	// 	fmt.Printf("Usage:\n  %v [options] DOCKER-MACHINE-NAME...", cmdName)
-	// 	fmt.Println("\nOptions:")
-	// 	flag.PrintDefaults()
-	// }
-
-	// help := flag.Bool("help", false, "Show this message")
-	// verbose := flag.Bool("verbose", false, "Verbose output")
-	// showVersion := flag.Bool("version", false, "Show version")
-
-	// flag.Parse()
-
-	// // Make sure a docker-machine name is specified.
-	// if len(flag.Args()) < 1 {
-	// 	flag.Usage()
-	// 	os.Exit(1)
-	// }
-
-	// if *showVersion {
-	// 	fmt.Printf("%v version %v, build %v\n", cmdName, Version, Build)
-	// 	return
-	// }
-
-	// if *help {
-	// 	flag.Usage()
-	// 	return
-	// }
-
-	// fmt.Println(*help)
-	// fmt.Println(*verbose)
-	// fmt.Println("Hello, yo!")
-	// fmt.Println(pwd)
+	// fmt.Println(verbose)
+	LogInfo(*dest)
+	LogInfo(*source)
+	LogInfo(*machineName)
+	LogInfo(unisonPath)
 }
+
+func getSshUser(machine string) string {
+	var sshUser string
+
+	return sshUser
+}
+
+// func runDockerMachineCmd(cmd) exec.Cmd {
+// 	dockerMachine := exec.Command("docker-machine", cmd)
+// 	var unisonOut bytes.Buffer
+// 	unisonCmd.Stdout = &unisonOut
+// 	unisonErr := unisonCmd.Run()
+// 	if unisonErr != nil {
+// 		color.Red("Error: could not run `unison`:")
+// 		color.Red(unisonErr.Error())
+// 		os.Exit(1)
+// 	}
+// }
