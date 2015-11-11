@@ -1,49 +1,73 @@
 package main
 
 import (
-  "fmt"
-  "os"
-  "flag"
+	// "flag"
+	"bytes"
+	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/gopkg.in/alecthomas/kingpin.v2"
+	"os"
+	"os/exec"
 )
 
 var (
-  Version string
-  Build string
+	Version string
+	Build   string
 )
 
 func main() {
-  pwd, err := os.Getwd()
-  if (err != nil) {
-    fmt.Println("Error: could not determine your current directory: ", err)
-    os.Exit(1)
-  }
+	pwd, pwdErr := os.Getwd()
+	if pwdErr != nil {
+		LogError("could not determine your current directory: " + pwdErr.Error())
+	}
 
-  // Setup usage arguments and options.
-  cmdName := "docker-unisync"
-  flag.Usage = func() {
-    fmt.Printf("Example usage:\n\t%v [options] DOCKER-MACHINE-NAME...", cmdName)
-    fmt.Println("\nOptions:")
-    flag.PrintDefaults()
-  }
+	var (
+		// verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
+		dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Default(pwd).String()
+		source      = kingpin.Flag("source", "Source folder to sync.").Short('s').Default(pwd).String()
+		machineName = kingpin.Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").Required().String()
+	)
 
-  help := flag.Bool("help", false, "Show this message")
-  verbose := flag.Bool("verbose", false, "Verbose output")
-  showVersion := flag.Bool("version", false, "Show version")
+	// Setup '-h' as an alias for the help flag.
+	kingpin.CommandLine.HelpFlag.Short('h')
 
-  flag.Parse()
+	kingpin.Parse()
 
-  if *showVersion {
-    fmt.Printf("%v version %v, build %v\n", cmdName, Version, Build)
-    return
-  }
+	// Check for `unison`.
+	unisonPath, unisonPathErr := exec.LookPath("unison")
+	if unisonPathErr != nil {
+		LogError("could not find `unison`, is it installed?", "See git.io/someurl for information on how to install it.")
+	}
 
-  if *help {
-    flag.Usage()
-    return
-  }
+	unisonCmd := exec.Command("unison", "-batch", "-ignore=Name {.git*,.vagrant/,*.DS_Store}", "-sshargs", "-o StrictHostKeyChecking=no", "-i asd", *source)
+	var unisonOut bytes.Buffer
+	unisonCmd.Stdout = &unisonOut
+	unisonErr := unisonCmd.Run()
+	if unisonErr != nil {
+		LogError("could not run `unison`: " + unisonErr.Error())
+	}
 
-  fmt.Println(*help)
-  fmt.Println(*verbose)
-  fmt.Println("Hello, yo!")
-  fmt.Println(pwd)
+	LogDebug("Out:", unisonOut.String())
+
+	// fmt.Println(verbose)
+	LogInfo(*dest)
+	LogInfo(*source)
+	LogInfo(*machineName)
+	LogInfo(unisonPath)
 }
+
+func getSshUser(machine string) string {
+	var sshUser string
+
+	return sshUser
+}
+
+// func runDockerMachineCmd(cmd) exec.Cmd {
+// 	dockerMachine := exec.Command("docker-machine", cmd)
+// 	var unisonOut bytes.Buffer
+// 	unisonCmd.Stdout = &unisonOut
+// 	unisonErr := unisonCmd.Run()
+// 	if unisonErr != nil {
+// 		color.Red("Error: could not run `unison`:")
+// 		color.Red(unisonErr.Error())
+// 		os.Exit(1)
+// 	}
+// }

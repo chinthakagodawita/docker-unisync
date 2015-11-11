@@ -8,14 +8,10 @@ BUILD=`git rev-parse --short HEAD`
 
 LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
 
-SOURCEDIR=.
-
 .DEFAULT_GOAL: $(BINARY)
 
-SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
-
 $(BINARY): $(SOURCES)
-	go build ${LDFLAGS} -o ${BINARY} main.go
+	go build ${LDFLAGS} -o ${BINARY}
 
 .PHONY: install
 install:
