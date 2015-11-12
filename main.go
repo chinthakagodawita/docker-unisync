@@ -60,38 +60,21 @@ func main() {
 	sshUser := getSshUser(*machineName)
 	sshHost := getSshHost(*machineName)
 	sshKey := getSshKey(*machineName)
-	unisonCmd := exec.Command("unison", "-auto", "-batch", "-ignore", "Name {.git*,.vagrant/,*.DS_Store}", "-sshargs", "-i "+sshKey, *source, "ssh://"+sshUser+"@"+sshHost+"/"+*dest)
 
-	// Setup stdout/stderr if verbose.
-	if *verbose {
-		unisonCmd.Stdout = os.Stdout
-		unisonCmd.Stderr = os.Stderr
+	unisonErr := func() {
+		LogError("could not run `unison`, is it installed?", "See git.io/install for information on how to install it.")
 	}
 
-	watcher, watchErr := NewWatcher(*source)
-	if watchErr != nil {
-		LogError(watchErr.Error())
-	}
-	watcher.Run()
-	defer watcher.Close()
-
-	done := make(chan bool)
-	go func() {
-		for {
-			select {
-			case file := <-watcher.Files:
-				LogInfo("modified file:", file)
-
-			case folder := <-watcher.Folders:
-				LogInfo("modified dir:", folder)
+	if Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose) == nil {
+		Watch(*source, func(id uint64, path string, flags []string) {
+			LogInfo("Watching for changes...")
+			LogInfo("Path changed:", path, " was ", strings.Join(flags, " "))
+			if Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose) != nil {
+				unisonErr()
 			}
-		}
-	}()
-	<-done
-
-	unisonErr := unisonCmd.Run()
-	if unisonErr != nil {
-		LogError("could not run `unison`")
+		})
+	} else {
+		unisonErr()
 	}
 }
 
@@ -168,4 +151,24 @@ func runDockerMachineCmd(cmd ...string) (string, error) {
 		return "", errors.New("could not run `docker-machine`: " + stderr.String())
 	}
 	return out.String(), nil
+}
+
+func Sync(user string, host string, key string, source string, dest string, verbose bool) error {
+	cmd := exec.Command("unison",
+		"-auto",
+		"-batch",
+		"-ignore",
+		"Name {.git*,*.DS_Store}",
+		"-sshargs",
+		"-i "+key,
+		source,
+		"ssh://"+user+"@"+host+"/"+dest)
+
+	// Setup stdout/stderr if verbose.
+	if verbose {
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+	}
+
+	return cmd.Run()
 }

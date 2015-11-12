@@ -20,6 +20,10 @@
 			"Rev": "8640971291e54b520f781270275b7ed8762ac909"
 		},
 		{
+			"ImportPath": "github.com/mattes/fsevents",
+			"Rev": "38da907b88aa3480b3a6fef2772dfa3d2b39ea1c"
+		},
+		{
 			"ImportPath": "github.com/mattn/go-isatty",
 			"Rev": "d6aaa2f596ae91a0a58d8e7f2c79670991468e4f"
 		},
@@ -31,11 +35,6 @@
 			"ImportPath": "gopkg.in/alecthomas/kingpin.v2",
 			"Comment": "v2.1.3",
 			"Rev": "aef28d186e59d39ed537473dfce4472108ea1045"
-		},
-		{
-			"ImportPath": "gopkg.in/fsnotify.v1",
-			"Comment": "v1.2.1",
-			"Rev": "7be54206639f256967dd82fa767397ba5f8f48f5"
 		}
 	]
 }
