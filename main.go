@@ -24,10 +24,24 @@ func main() {
 	}
 
 	var (
-		// verbose     = kingpin.Flag("verbose", "Verbose mode.").Short('v').Bool()
-		dest        = kingpin.Flag("destination", "Destination folder (on the Docker Machine) to sync to.").Short('d').Default(pwd).String()
-		source      = kingpin.Flag("source", "Source folder to sync.").Short('s').Default(pwd).String()
-		machineName = kingpin.Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").Required().String()
+		verbose = kingpin.
+			Flag("verbose", "Verbose mode.").
+			Short('v').
+			Bool()
+		dest = kingpin.
+			Flag("destination", "Destination folder (on the Docker Machine) to sync to.").
+			Short('d').
+			Default(pwd).
+			String()
+		source = kingpin.
+			Flag("source", "Source folder to sync.").
+			Short('s').
+			Default(pwd).
+			String()
+		machineName = kingpin.
+				Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").
+				Required().
+				String()
 	)
 
 	// Setup '-h' as an alias for the help flag.
