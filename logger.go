@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/fatih/color"
 	"os"
+	"strings"
 )
 
 func LogError(errorMessage string, infoMessages ...string) {
@@ -18,9 +19,7 @@ func LogError(errorMessage string, infoMessages ...string) {
 }
 
 func LogInfo(messages ...string) {
-	for _, message := range messages {
-		color.Cyan(message)
-	}
+	color.Cyan(strings.Join(messages, " "))
 }
 
 func LogDebug(messages ...string) {
