@@ -31,6 +31,11 @@
 			"ImportPath": "gopkg.in/alecthomas/kingpin.v2",
 			"Comment": "v2.1.3",
 			"Rev": "aef28d186e59d39ed537473dfce4472108ea1045"
+		},
+		{
+			"ImportPath": "gopkg.in/fsnotify.v1",
+			"Comment": "v1.2.1",
+			"Rev": "7be54206639f256967dd82fa767397ba5f8f48f5"
 		}
 	]
 }

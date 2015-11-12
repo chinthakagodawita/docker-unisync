@@ -68,6 +68,27 @@ func main() {
 		unisonCmd.Stderr = os.Stderr
 	}
 
+	watcher, watchErr := NewWatcher(*source)
+	if watchErr != nil {
+		LogError(watchErr.Error())
+	}
+	watcher.Run()
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case file := <-watcher.Files:
+				LogInfo("modified file:", file)
+
+			case folder := <-watcher.Folders:
+				LogInfo("modified dir:", folder)
+			}
+		}
+	}()
+	<-done
+
 	unisonErr := unisonCmd.Run()
 	if unisonErr != nil {
 		LogError("could not run `unison`")
