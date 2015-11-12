@@ -116,10 +116,12 @@ func checkUnisonInstallation(machine string) {
 }
 
 func runDockerMachineCmd(cmd ...string) (string, error) {
-	// LogInfo("Running command: ", "docker-machine", strings.Join(cmd, " "))
+	var (
+		out    bytes.Buffer
+		stderr bytes.Buffer
+	)
+
 	dm := exec.Command("docker-machine", cmd...)
-	var out bytes.Buffer
-	var stderr bytes.Buffer
 	dm.Stdout = &out
 	dm.Stderr = &stderr
 	dmError := dm.Run()
