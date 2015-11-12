@@ -1,6 +1,9 @@
 {
 	"ImportPath": "github.com/chinthakagodawita/docker-unisync",
 	"GoVersion": "go1.5.1",
+	"Packages": [
+		"."
+	],
 	"Deps": [
 		{
 			"ImportPath": "github.com/Jeffail/gabs",

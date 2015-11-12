@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/fatih/color"
+	"github.com/fatih/color"
 	"os"
 	"strings"
 )

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/mattes/fsevents"
+	"github.com/mattes/fsevents"
 	"sort"
 	"time"
 )

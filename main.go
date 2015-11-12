@@ -5,8 +5,8 @@ package main
 import (
 	"bytes"
 	"errors"
-	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/github.com/Jeffail/gabs"
-	"github.com/chinthakagodawita/docker-unisync/Godeps/_workspace/src/gopkg.in/alecthomas/kingpin.v2"
+	"github.com/Jeffail/gabs"
+	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
 	"os/exec"
 	"strings"
