@@ -62,8 +62,12 @@ func main() {
 	sshKey := getSshKey(*machineName)
 	unisonCmd := exec.Command("unison", "-auto", "-batch", "-ignore", "Name {.git*,.vagrant/,*.DS_Store}", "-sshargs", "-i "+sshKey, *source, "ssh://"+sshUser+"@"+sshHost+"/"+*dest)
 
-	unisonCmd.Stdout = os.Stdout
-	unisonCmd.Stderr = os.Stderr
+	// Setup stdout/stderr if verbose.
+	if *verbose {
+		unisonCmd.Stdout = os.Stdout
+		unisonCmd.Stderr = os.Stderr
+	}
+
 	unisonErr := unisonCmd.Run()
 	if unisonErr != nil {
 		LogError("could not run `unison`")
