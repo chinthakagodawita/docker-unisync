@@ -24,6 +24,6 @@ func LogInfo(messages ...string) {
 
 func LogDebug(messages ...string) {
 	for _, message := range messages {
-		color.Cyan(message)
+		color.Yellow(message)
 	}
 }

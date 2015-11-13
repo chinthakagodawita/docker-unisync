@@ -65,16 +65,15 @@ func main() {
 		LogError("could not run `unison`, is it installed?", "See git.io/install for information on how to install it.")
 	}
 
-	if Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose) == nil {
+	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, false); ok {
+		LogInfo("Watching for changes...")
 		Watch(*source, func(id uint64, path string, flags []string) {
-			LogInfo("Watching for changes...")
-			LogInfo("Path changed:", path, " was ", strings.Join(flags, " "))
-			if Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose) != nil {
+			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose); ok {
 				unisonErr()
 			}
 		})
 	} else {
-		unisonErr()
+		LogError("could not run `unison`:\n" + msg)
 	}
 }
 
@@ -153,10 +152,14 @@ func runDockerMachineCmd(cmd ...string) (string, error) {
 	return out.String(), nil
 }
 
-func Sync(user string, host string, key string, source string, dest string, verbose bool) error {
+func Sync(user string, host string, key string, source string, dest string, verbose bool) (bool, string) {
+	var out bytes.Buffer
+
 	cmd := exec.Command("unison",
 		"-auto",
 		"-batch",
+		"-terse",
+		"-watch",
 		"-ignore",
 		"Name {.git*,*.DS_Store}",
 		"-sshargs",
@@ -164,11 +167,14 @@ func Sync(user string, host string, key string, source string, dest string, verb
 		source,
 		"ssh://"+user+"@"+host+"/"+dest)
 
-	// Setup stdout/stderr if verbose.
+	// Pipe in stdout/stderr if verbose.
 	if verbose {
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+	} else {
+		cmd.Stdout = &out
+		cmd.Stderr = &out
 	}
 
-	return cmd.Run()
+	return cmd.Run() == nil, out.String()
 }
