@@ -5,6 +5,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 	"github.com/Jeffail/gabs"
 	"gopkg.in/alecthomas/kingpin.v2"
 	"os"
@@ -92,7 +93,12 @@ func getSshHost(machine string) string {
 		LogError(err.Error())
 	}
 
-	return strings.Trim(out, " \"\n")
+	host := strings.Trim(out, " \"\n")
+	if host == "" {
+		LogError(fmt.Sprintf("could not determine IP address of Docker Machine '%v'. Is it running?", machine))
+	}
+
+	return host
 }
 
 func getSshKey(machine string) string {
