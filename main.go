@@ -68,7 +68,7 @@ func main() {
 	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, false); ok {
 		LogInfo("Watching for changes...")
 		Watch(*source, func(id uint64, path string, flags []string) {
-			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose); ok {
+			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose); !ok {
 				unisonErr()
 			}
 		})
