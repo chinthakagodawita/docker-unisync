@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Docker-unisync by chinthakagodawita</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Docker-unisync</h1>
+      <h2 class="project-tagline">Unison-based mounts for docker-machine.</h2>
+      <a href="https://github.com/chinthakagodawita/docker-unisync" class="btn">View on GitHub</a>
+      <a href="https://github.com/chinthakagodawita/docker-unisync/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/chinthakagodawita/docker-unisync/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="docker-unisync" class="anchor" href="#docker-unisync" aria-hidden="true"><span class="octicon octicon-link"></span></a>docker-unisync</h1>
+
+<p><a href="https://travis-ci.org/chinthakagodawita/docker-unisync"><img src="https://travis-ci.org/chinthakagodawita/docker-unisync.svg?branch=master" alt="Build Status"></a></p>
+
+<p>docker-unisync mounts a specified directory into your Docker Machine and recursively watches that directory for changes. Changed files are copied across to your Docker Machine using <a href="https://www.cis.upenn.edu/%7Ebcpierce/unison/">Unison</a>.</p>
+
+<p>Files changed on your Docker Machine are copied back to the source folder as well.</p>
+
+<p>At the moment, only Mac OS X is supported due to reliance on the FSEvents API. Once the Go fsnotify library <a href="https://github.com/go-fsnotify/fsnotify/issues/18">supports recursive directory watching</a>, this may be revisited.</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Requirements</h2>
+
+<ul>
+<li>Mac OS X (tested on 10.11 El Capitan but should work with 10.9+)</li>
+<li>Unison 2.48.3</li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Install Unison with <a href="http://brew.sh">Homebrew</a>:</p>
+
+<div class="highlight highlight-source-shell"><pre>brew install unison</pre></div>
+
+<p>Binaries for this will be available very soon. For the meantime, install Go 1.5 and install via <code>go get</code>:</p>
+
+<div class="highlight highlight-source-shell"><pre>brew install go
+go get chinthakagodawita/docker-unisync</pre></div>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>First make sure your Docker Machine is running:</p>
+
+<div class="highlight highlight-source-shell"><pre>docker-machine up mymachine</pre></div>
+
+<p>Then <code>cd</code> to the directory you want to sync and run <code>docker-unisync</code>:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c1">cd</span> /my/sync/dir
+docker-unisync mymachine</pre></div>
+
+<p>Alternatively, provide source and destination parameters:</p>
+
+<div class="highlight highlight-source-shell"><pre>docker-unisync --source=/my/sync/dir --destination=/dir/on/machine mymachine</pre></div>
+
+<p>See <code>docker-unisync --help</code> for a full list of options.</p>
+
+<h2>
+<a id="building" class="anchor" href="#building" aria-hidden="true"><span class="octicon octicon-link"></span></a>Building</h2>
+
+<p>All dependencies are managed via <a href="https://github.com/tools/godep">godep</a> and the <a href="https://golang.org/s/go15vendor">Go 1.5 Vendor Experiment</a>.</p>
+
+<p>To build, install <code>godep</code>, <code>cd</code> to this directory and run:</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-k">export</span> GO15VENDOREXPERIMENT=1
+godep restore
+make</pre></div>
+
+<h2>
+<a id="releasing" class="anchor" href="#releasing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Releasing</h2>
+
+<ol>
+<li>Increment the version number in the <code>Makefile</code>
+</li>
+<li>Commit and tag the commit with the same version number with a 'v' prefix (e.g. <code>v0.0.1</code>)</li>
+<li>Push to the <code>master</code> branch, Travis will take care of building a releasing a binary.</li>
+</ol>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/chinthakagodawita/docker-unisync">Docker-unisync</a> is maintained by <a href="https://github.com/chinthakagodawita">chinthakagodawita</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
