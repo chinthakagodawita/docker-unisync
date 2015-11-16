@@ -67,6 +67,9 @@ func MachineInstallUnison(machine string) {
 		// Attempt installation of unison (make sure it's a boot2docker machine,
 		// error out otherwise).
 		machineType, installErr := RunMachineCommand("ssh", machine, "uname -a")
+		if installErr != nil {
+			LogError(installErr.Error())
+		}
 
 		if !strings.Contains(machineType, "boot2docker") {
 			LogError("could not find Unison on your Docker Machine.", "Automated Unison installation is not supported on non-boot2docker Docker Machines. Please install Unison on your Docker Machine before continuing.")
