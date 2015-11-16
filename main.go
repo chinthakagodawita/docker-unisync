@@ -82,7 +82,8 @@ func main() {
 		}
 	}
 
-	// checkUnisonInstallation(*machineName)
+	// Install Unison in the machine if required.
+	MachineInstallUnison(*machineName)
 
 	sshUser := MachineSshUser(*machineName)
 	sshHost := MachineIp(*machineName)

@@ -9,6 +9,8 @@ import (
 	"strings"
 )
 
+const UNISON_URL = "https://bintray.com/artifact/download/chinthakagodawita/generic/unison-2.48.3-boot2docker.1.tar.gz"
+
 func MachineSshUser(machine string) string {
 	out, err := RunMachineCommand("inspect", machine, "--format", "\"{{.Driver.SSHUser}}\"")
 	if err != nil {
@@ -62,8 +64,15 @@ func MachineSshKey(machine string) string {
 func MachineInstallUnison(machine string) {
 	_, unisonErr := RunMachineCommand("ssh", machine, "which unison")
 	if unisonErr != nil {
-		// Attempt installation of unison.
-		_, installErr := RunMachineCommand("ssh", machine, "wget http://www.seas.upenn.edu/~bcpierce/unison/download/releases/unison-2.48.3/unison-2.48.3.tar.gz | tar xz -C /tmp && (cd /tmp/unison-* && make UISTYLE=text && sudo cp unison /usr/local/bin/)")
+		// Attempt installation of unison (make sure it's a boot2docker machine,
+		// error out otherwise).
+		machineType, installErr := RunMachineCommand("ssh", machine, "uname -a")
+
+		if !strings.Contains(machineType, "boot2docker") {
+			LogError("sorry, automated Unison installed is not supported on non-boot2docker Docker Machines. Please install Unison on your Docker Machine before continuing.")
+		}
+
+		_, installErr = RunMachineCommand("ssh", machine, "mkdir /tmp/unison && cd /tmp/unison && wget "+UNISON_URL+" && tar xf unison-*.tar.gz && sudo cp unison /usr/local/bin/ && cd /tmp && rm -r /tmp/unison")
 
 		if installErr != nil {
 			LogError(installErr.Error())
