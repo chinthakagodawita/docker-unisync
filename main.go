@@ -18,6 +18,8 @@ var (
 	Build   string
 )
 
+const IGNORE_WILDCARD = "*"
+
 func main() {
 	pwd, pwdErr := os.Getwd()
 	if pwdErr != nil {
@@ -39,6 +41,11 @@ func main() {
 			Short('s').
 			Default(pwd).
 			String()
+		ignored = kingpin.
+			Flag("ignored", "Comma-separated list of file patterns to ignore (use '"+IGNORE_WILDCARD+"' as a wildcard).").
+			Short('i').
+			Default("*.git*,.DS_Store").
+			String()
 		machineName = kingpin.
 				Arg("DOCKER-MACHINE-NAME", "Name of Docker Machine to sync to.").
 				Required().
@@ -56,6 +63,15 @@ func main() {
 		LogError("could not find `unison`, is it installed?", "See git.io/someurl for information on how to install it.")
 	}
 
+	// Check ignored flags.
+	var ignoredItems []string
+	if *ignored != "" {
+		ignoredItems = strings.Split(*ignored, ",")
+		for index, ignoredItem := range ignoredItems {
+			ignoredItems[index] = strings.Trim(ignoredItem, " ")
+		}
+	}
+
 	// checkUnisonInstallation(*machineName)
 
 	sshUser := getSshUser(*machineName)
@@ -66,10 +82,12 @@ func main() {
 		LogError("could not run `unison`, is it installed?", "See git.io/install for information on how to install it.")
 	}
 
-	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, false); ok {
+	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, false); ok {
 		LogInfo("Watching for changes...")
-		Watch(*source, func(id uint64, path string, flags []string) {
-			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, *verbose); !ok {
+		Watch(*source, ignoredItems, func(id uint64, path string, flags []string) {
+			LogDebug(path)
+			LogDebug(flags...)
+			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
 				unisonErr()
 			}
 		})
@@ -158,20 +176,34 @@ func runDockerMachineCmd(cmd ...string) (string, error) {
 	return out.String(), nil
 }
 
-func Sync(user string, host string, key string, source string, dest string, verbose bool) (bool, string) {
+func Sync(user string, host string, key string, source string, dest string, ignored []string, verbose bool) (bool, string) {
 	var out bytes.Buffer
 
-	cmd := exec.Command("unison",
+	ignoredList := ""
+	if len(ignored) > 0 {
+		ignoredList = strings.Join(ignored, ",")
+	}
+
+	cmdArgs := []string{
 		"-auto",
 		"-batch",
 		"-terse",
 		"-watch",
-		"-ignore",
-		"Name {.git*,*.DS_Store}",
-		"-sshargs",
-		"-i "+key,
+		"-prefer",
 		source,
-		"ssh://"+user+"@"+host+"/"+dest)
+		"-retry",
+		"3",
+		"-sshargs",
+		"-i " + key,
+	}
+
+	if ignoredList != "" {
+		cmdArgs = append(cmdArgs, "-ignore", "Name {"+ignoredList+"}")
+	}
+
+	cmdArgs = append(cmdArgs, source, "ssh://"+user+"@"+host+"/"+dest)
+
+	cmd := exec.Command("unison", cmdArgs...)
 
 	// Pipe in stdout/stderr if verbose.
 	if verbose {
