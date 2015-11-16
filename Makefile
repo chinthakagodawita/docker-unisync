@@ -6,7 +6,7 @@ BINARY=docker-unisync
 VERSION=0.0.1
 BUILD=`git rev-parse --short HEAD`
 
-LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.Build=${BUILD}"
+LDFLAGS=-ldflags "-X main.Name=${BINARY} -X main.Version=${VERSION} -X main.Build=${BUILD}"
 
 .DEFAULT_GOAL: $(BINARY)
 

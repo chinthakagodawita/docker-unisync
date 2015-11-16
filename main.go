@@ -14,6 +14,7 @@ import (
 )
 
 var (
+	Name    string
 	Version string
 	Build   string
 )
@@ -59,6 +60,13 @@ func main() {
 
 	// Setup '-h' as an alias for the help flag.
 	kingpin.CommandLine.HelpFlag.Short('h')
+
+	// Setup version printing.
+	kingpin.Flag("version", "Show version.").PreAction(kingpin.Action(func(*kingpin.ParseContext) error {
+		fmt.Printf("%v version %v, build %v\n", Name, Version, Build)
+		os.Exit(0)
+		return nil
+	})).Bool()
 
 	kingpin.Parse()
 
