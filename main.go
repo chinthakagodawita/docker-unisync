@@ -70,7 +70,7 @@ func main() {
 	// Check for `unison`.
 	_, unisonPathErr := exec.LookPath("unison")
 	if unisonPathErr != nil {
-		LogError("could not find `unison`, is it installed?", "See git.io/someurl for information on how to install it.")
+		LogError("could not find `unison`, is it installed?", "See github.com/chinthakagodawita/docker-unisync#installation for information on how to install it.")
 	}
 
 	// Check ignored flags.
@@ -90,7 +90,7 @@ func main() {
 	sshKey := MachineSshKey(*machineName)
 
 	unisonErr := func() {
-		LogError("could not run `unison`, is it installed?", "See git.io/install for information on how to install it.")
+		LogError("could not run `unison`, is it installed?", "See github.com/chinthakagodawita/docker-unisync#installation for information on how to install it.")
 	}
 
 	LogInfo("Beginning initial sync, please wait...")

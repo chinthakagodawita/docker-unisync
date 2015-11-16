@@ -7,9 +7,20 @@ Files changed on your Docker Machine are copied back to the source folder as wel
 
 At the moment, only Mac OS X is supported due to reliance on the FSEvents API. Once the Go fsnotify library [supports recursive directory watching](https://github.com/go-fsnotify/fsnotify/issues/18), this may be revisited.
 
+## Requirements
+
+* Mac OS X (tested on 10.11 El Capitan but should work with 10.9+)
+* Unison 2.48.3
+
 ## Installation
 
-Binaries will be available very soon. For the meantime, install Go 1.5 and install via `go get`:
+Install Unison with [Homebrew](http://brew.sh):
+
+```bash
+brew install unison
+```
+
+Binaries for this will be available very soon. For the meantime, install Go 1.5 and install via `go get`:
 
 ```bash
 brew install go
