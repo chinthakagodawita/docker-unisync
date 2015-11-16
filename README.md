@@ -1,4 +1,5 @@
 # docker-unisync
+[![Build Status](https://travis-ci.org/chinthakagodawita/docker-unisync.svg?branch=master)](https://travis-ci.org/chinthakagodawita/docker-unisync)
 
 docker-unisync mounts a specified directory into your Docker Machine and recursively watches that directory for changes. Changed files are copied across to your Docker Machine using [Unison](https://www.cis.upenn.edu/~bcpierce/unison/).
 
