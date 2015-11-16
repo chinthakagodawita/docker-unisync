@@ -82,14 +82,18 @@ func main() {
 		LogError("could not run `unison`, is it installed?", "See git.io/install for information on how to install it.")
 	}
 
+	LogInfo("Beginning initial sync, please wait...")
 	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, false); ok {
-		LogInfo("Watching for changes...")
+		LogInfo("Initial sync complete, watching for changes...")
+		syncing := false
 		Watch(*source, ignoredItems, func(id uint64, path string, flags []string) {
-			LogDebug(path)
-			LogDebug(flags...)
-			if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
-				unisonErr()
+			if !syncing {
+				syncing = true
+				if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
+					unisonErr()
+				}
 			}
+			syncing = false
 		})
 	} else {
 		LogError("could not run `unison`:\n" + msg)
@@ -188,7 +192,6 @@ func Sync(user string, host string, key string, source string, dest string, igno
 		"-auto",
 		"-batch",
 		"-terse",
-		"-watch",
 		"-prefer",
 		source,
 		"-retry",
