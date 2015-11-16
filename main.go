@@ -94,7 +94,11 @@ func main() {
 	}
 
 	LogInfo("Beginning initial sync, please wait...")
-	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, false); ok {
+
+	// Create destination directory on Docker Machine if required.
+	MachineCreatePath(*machineName, *dest)
+
+	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); ok {
 		if !*noWatch {
 			LogInfo("Initial sync complete, watching for changes...")
 			syncing := false

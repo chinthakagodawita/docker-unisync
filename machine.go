@@ -85,6 +85,13 @@ func MachineInstallUnison(machine string) {
 	}
 }
 
+func MachineCreatePath(machine string, path string) {
+	_, err := RunMachineCommand("ssh", machine, "mkdir -p", path)
+	if err != nil {
+		LogError("could not create destination directory on your Docker Machine: " + err.Error())
+	}
+}
+
 func RunMachineCommand(cmd ...string) (string, error) {
 	var (
 		out    bytes.Buffer
