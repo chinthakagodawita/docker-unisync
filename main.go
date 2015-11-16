@@ -41,6 +41,11 @@ func main() {
 			Short('s').
 			Default(pwd).
 			String()
+		noWatch = kingpin.
+			Flag("no-watch", "Don't watch source directory for changes (do a onetime sync).").
+			Short('w').
+			Default("false").
+			Bool()
 		ignored = kingpin.
 			Flag("ignored", "Comma-separated list of file patterns to ignore (use '"+IGNORE_WILDCARD+"' as a wildcard).").
 			Short('i').
@@ -84,17 +89,21 @@ func main() {
 
 	LogInfo("Beginning initial sync, please wait...")
 	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, false); ok {
-		LogInfo("Initial sync complete, watching for changes...")
-		syncing := false
-		Watch(*source, ignoredItems, func(id uint64, path string, flags []string) {
-			if !syncing {
-				syncing = true
-				if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
-					unisonErr()
+		if !*noWatch {
+			LogInfo("Initial sync complete, watching for changes...")
+			syncing := false
+			Watch(*source, ignoredItems, func(id uint64, path string, flags []string) {
+				if !syncing {
+					syncing = true
+					if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
+						unisonErr()
+					}
 				}
-			}
-			syncing = false
-		})
+				syncing = false
+			})
+		} else {
+			LogInfo("Initial sync complete")
+		}
 	} else {
 		LogError("could not run `unison`:\n" + msg)
 	}
