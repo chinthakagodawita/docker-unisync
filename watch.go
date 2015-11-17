@@ -63,7 +63,6 @@ func Watch(path string, ignored []string, poll bool, callback func(id uint64, pa
 			flags := make([]string, 0)
 			for bit, description := range noteDescription {
 				if event.Flags&bit == bit {
-					// LogDebug(description)
 					flags = append(flags, description)
 				}
 			}
