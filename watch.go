@@ -32,7 +32,9 @@ var noteDescription = map[fsevents.EventFlags]string{
 	fsevents.ItemIsSymlink:     "IsSymLink",
 }
 
-func Watch(path string, ignored []string, callback func(id uint64, path string, flags []string)) {
+const WATCH_POLL_INTERVAL = 5
+
+func Watch(path string, ignored []string, poll bool, callback func(id uint64, path string, flags []string)) {
 	dev, _ := fsevents.DeviceForPath(path)
 	fsevents.EventIDForDeviceBeforeTime(dev, time.Now())
 
@@ -43,6 +45,13 @@ func Watch(path string, ignored []string, callback func(id uint64, path string, 
 		Flags:   fsevents.FileEvents | fsevents.WatchRoot}
 	es.Start()
 	ec := es.Events
+
+	poller := time.NewTicker(WATCH_POLL_INTERVAL * time.Second)
+
+	// Disable the poller if polling isn't requested.
+	if !poll {
+		poller.Stop()
+	}
 
 	for {
 		select {
@@ -61,6 +70,8 @@ func Watch(path string, ignored []string, callback func(id uint64, path string, 
 			sort.Sort(sort.StringSlice(flags))
 			go callback(event.ID, event.Path, flags)
 			es.Flush(false)
+		case <-poller.C:
+			go callback(0, "", []string{})
 		}
 	}
 }

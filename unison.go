@@ -7,6 +7,8 @@ import (
 	"strings"
 )
 
+const SYNC_RETRIES = "3"
+
 func Sync(user string, host string, key string, source string, dest string, ignored []string, verbose bool) (bool, string) {
 	var out bytes.Buffer
 
@@ -19,10 +21,10 @@ func Sync(user string, host string, key string, source string, dest string, igno
 		"-auto",
 		"-batch",
 		"-terse",
+		"-retry",
+		SYNC_RETRIES,
 		"-prefer",
 		source,
-		"-retry",
-		"3",
 		"-sshargs",
 		"-i " + key,
 	}

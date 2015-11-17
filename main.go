@@ -44,6 +44,11 @@ func main() {
 			Short('w').
 			Default("false").
 			Bool()
+		noPoll = kingpin.
+			Flag("no-polling", "Don't periodic poll for changes (in addition to watching files).").
+			Short('p').
+			Default("false").
+			Bool()
 		ignored = kingpin.
 			Flag("ignored", "Comma-separated list of file patterns to ignore (use '"+IGNORE_WILDCARD+"' as a wildcard).").
 			Short('i').
@@ -102,14 +107,15 @@ func main() {
 		if !*noWatch {
 			LogInfo("Initial sync complete, watching for changes...")
 			syncing := false
-			Watch(*source, ignoredItems, func(id uint64, path string, flags []string) {
+			Watch(*source, ignoredItems, !*noPoll, func(id uint64, path string, flags []string) {
 				if !syncing {
+					LogInfo("syncing, path:", path)
 					syncing = true
 					if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
 						unisonErr()
 					}
+					syncing = false
 				}
-				syncing = false
 			})
 		} else {
 			LogInfo("Initial sync complete")
