@@ -4,6 +4,7 @@ go:
 - 1.5.1
 env:
 - GO15VENDOREXPERIMENT=1
+before_deploy: "ls -al"
 deploy:
   provider: releases
   api_key:
@@ -12,3 +13,9 @@ deploy:
   on:
     repo: chinthakagodawita/docker-unisync
     tags: true
+after_deploy:
+  - "ls -al"
+  - cd `pwd`
+  - ls -al
+  - cd $HOME/gopath/src/github.com/chinthakagodawita/docker-unisync
+  - ls -al
