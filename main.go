@@ -109,7 +109,6 @@ func main() {
 			syncing := false
 			Watch(*source, ignoredItems, !*noPoll, func(id uint64, path string, flags []string) {
 				if !syncing {
-					LogInfo("syncing, path:", path)
 					syncing = true
 					if ok, _ = Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); !ok {
 						unisonErr()

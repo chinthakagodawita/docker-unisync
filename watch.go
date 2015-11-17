@@ -69,6 +69,7 @@ func Watch(path string, ignored []string, poll bool, callback func(id uint64, pa
 			sort.Sort(sort.StringSlice(flags))
 			go callback(event.ID, event.Path, flags)
 			es.Flush(false)
+
 		case <-poller.C:
 			go callback(0, "", []string{})
 		}
