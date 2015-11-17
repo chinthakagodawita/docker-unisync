@@ -1,9 +1,14 @@
 os: osx
-
 language: go
-
 go:
-  - 1.5.1
-
+- 1.5.1
 env:
 - GO15VENDOREXPERIMENT=1
+deploy:
+  provider: releases
+  api_key:
+    secure: I0+YWczSA1CgwPwcSaEvybBIOow1EbObt/ZGPt4ybYhjss69MoTj20OhbeRIOEKYFrZez1byxsUDg+0t0zhqN4WSdk/pues3UKnTy90QSVcPl8I20f98Bod4KuM9g5tXe7F5J4oc1u7s1jvoWYMQ+yOC6an6yMymkEiMR7PTCkQ6LLrMerksxs9BMH3QJHBW7bVfnSRyCF64IE245Jtj/WB0ybNqPZp3Jj2sH9bJW7THupgfnzFHB47uHEu4UYkbASwEJyNTZD7nsN0QsYaO8RX1EtRu5fSi2ug2/MuIjlHVKqSCFf8wnWmsecK3K4rE/3As4i4x56jmYkbS3+Hq7ya+v3oX+deAwet/DhovgXoXMzqGxD+O9wXrQrK+DjHnqDv31fDqVEB/IxVpudWutxP/CRQOyr+GewBNpvaGu1lRgR3k4eX7yan41Egwg/L41sis5i5ZZmf/Oz9AfJgBMFAOAuVb2j6n1kynLpqHZvuSDEP4+DStahGVfhmr6aLM5FbJXFJXKFc8fhgLh8NjmkgAE1T8zAnmoTpThA3qFuy/eNFc0IqoMAWMFzagrAMlQY5pETHBG/mthZkAvo8aeIsZOpX5wmD2VvAFaJwsgq2DuguKWGUkDSkyv1FK8Q2Jm0clKCujPP79ND0MiRcI6i1N0RRPJ4Ni75Yke89Ja3M=
+  file: docker-unisync
+  on:
+    repo: chinthakagodawita/docker-unisync
+    tags: true
