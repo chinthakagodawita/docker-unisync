@@ -50,7 +50,7 @@ func main() {
 			Default("false").
 			Bool()
 		ignored = kingpin.
-			Flag("ignored", "Comma-separated list of file patterns to ignore (use '"+IGNORE_WILDCARD+"' as a wildcard).").
+			Flag("ignore", "Comma-separated list of file patterns to ignore (use '"+IGNORE_WILDCARD+"' as a wildcard).").
 			Short('i').
 			Default("*.git*,.DS_Store").
 			String()
