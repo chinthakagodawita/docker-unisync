@@ -21,6 +21,7 @@ func Sync(user string, host string, key string, source string, dest string, igno
 		"-auto",
 		"-batch",
 		"-terse",
+		"-ignorearchives",
 		"-retry",
 		SYNC_RETRIES,
 		"-prefer",
