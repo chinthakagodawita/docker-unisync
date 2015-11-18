@@ -3,7 +3,7 @@ SOURCES := $(shell find $(SOURCEDIR) -name '*.go')
 
 BINARY=docker-unisync
 
-VERSION=0.0.1
+VERSION=1.0.0
 BUILD=`git rev-parse --short HEAD`
 
 LDFLAGS=-ldflags "-X main.Name=${BINARY} -X main.Version=${VERSION} -X main.Build=${BUILD}"
