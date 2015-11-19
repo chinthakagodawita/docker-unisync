@@ -20,7 +20,10 @@ Install Unison with [Homebrew](http://brew.sh):
 brew install unison
 ```
 
-Binaries for this will be available very soon. For the meantime, install Go 1.5 and install via `go get`:
+Download the latest release binary on [the releases page](https://github.com/chinthakagodawita/docker-unisync/releases). Currently, only **darwin/amd64** binaries (for Mac OS X 10.9+) are available.
+
+### Building from source
+Install Go 1.5 and install via `go get`:
 
 ```bash
 brew install go
