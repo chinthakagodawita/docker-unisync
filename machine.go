@@ -75,6 +75,8 @@ func MachineInstallUnison(machine string) {
 			LogError("could not find Unison on your Docker Machine.", "Automated Unison installation is not supported on non-boot2docker Docker Machines. Please install Unison on your Docker Machine before continuing.")
 		}
 
+		LogInfo("Attempting to install `unison` in your Docker Machine.")
+
 		_, installErr = RunMachineCommand("ssh", machine, "mkdir /tmp/unison && cd /tmp/unison && wget "+UNISON_URL+" && tar xf unison-*.tar.gz && sudo cp unison /usr/local/bin/ && cd /tmp && rm -r /tmp/unison")
 
 		if installErr != nil {
