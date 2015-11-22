@@ -87,8 +87,12 @@ func MachineInstallUnison(machine string) {
 	}
 }
 
-func MachineCreatePath(machine string, path string) {
+func MachineCreatePath(machine string, path string, user string) {
 	_, err := RunMachineCommand("ssh", machine, "mkdir -p", path)
+	if err == nil {
+		_, err = RunMachineCommand("ssh", machine, "sudo chown -R", user, path)
+	}
+
 	if err != nil {
 		LogError("could not create destination directory on your Docker Machine: " + err.Error())
 	}

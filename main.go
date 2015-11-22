@@ -101,7 +101,7 @@ func main() {
 	LogInfo("Beginning initial sync, please wait...")
 
 	// Create destination directory on Docker Machine if required.
-	MachineCreatePath(*machineName, *dest)
+	MachineCreatePath(*machineName, *dest, sshUser)
 
 	if ok, msg := Sync(sshUser, sshHost, sshKey, *source, *dest, ignoredItems, *verbose); ok {
 		if !*noWatch {

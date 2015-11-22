@@ -3,6 +3,7 @@
 ## Unreleased
 
 * Increased logging when attempting to install Unison in a Docker Machine
+* Fixed issue where destination directory may not have enough permissions for us to sync
 
 ## 1.0.1
 
