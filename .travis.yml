@@ -10,10 +10,8 @@ env:
 
 before_install:
   # Install glide (for dependency management).
-  - wget "https://github.com/Masterminds/glide/releases/download/0.7.2/glide-0.7.2-linux-amd64.tar.gz" -O /tmp/glide.tar.gz
-  - mkdir -p /tmp/glide
-  - tar -xvzf /tmp/glide.tar.gz -C /tmp/glide/
-  - export PATH=$PATH:/tmp/glide/linux-amd64/
+  - brew update
+  - brew install glide
   # Get all dependencies.
   - make bootstrap
 
