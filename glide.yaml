@@ -1,0 +1,18 @@
+package: github.com/chinthakagodawita/docker-unisync
+import:
+- package: github.com/alecthomas/units
+  version: 2efee857e7cfd4f3d0138cc3cbb1b4966962b93a
+- package: github.com/fatih/color
+  version: 8640971291e54b520f781270275b7ed8762ac909
+- package: github.com/shiena/ansicolor
+  version: d445752f6f66f9cd987722f109149f6799cdf1de
+- package: github.com/Jeffail/gabs
+  version: b69c9e648a2529c8d7b927ba7f87bc7fe0b3b0ea
+- package: github.com/alecthomas/template
+  version: b867cc6ab45cece8143cfcc6fc9c77cf3f2c23c0
+- package: gopkg.in/alecthomas/kingpin.v2
+  version: 6e0b900c7f00daa54d47a64b5ff6a9c745c3ba06
+- package: github.com/mattn/go-isatty
+  version: d6aaa2f596ae91a0a58d8e7f2c79670991468e4f
+- package: github.com/mattes/fsevents
+  version: 38da907b88aa3480b3a6fef2772dfa3d2b39ea1c
