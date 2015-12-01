@@ -14,7 +14,7 @@ LDFLAGS=-ldflags "-X main.Name=${BINARY} -X main.Version=${VERSION} -X main.Buil
 .DEFAULT_GOAL: $(BINARY)
 
 $(BINARY): $(SOURCES)
-	gox -cgo -os="${TARGET_OS}" -arch="${TARGET_ARCH}" ${LDFLAGS} -output="${BINDIR}/${BINARY}_{{.OS}}_{{.Arch}}"
+	go build ${LDFLAGS} -o ${BINDIR}/${BINARY}
 
 .PHONY: install
 install:
@@ -27,4 +27,4 @@ bootstrap:
 
 .PHONY: clean
 clean:
-	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+	if [ -f ${BINDIR} ] ; then rm -r ${BINDIR} ; fi
