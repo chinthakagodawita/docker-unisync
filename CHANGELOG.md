@@ -1,7 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.0.2
 
+* Fixed compatibility with Docker Machine 0.5.1
 * Increased logging when attempting to install Unison in a Docker Machine
 * Fixed issue where destination directory may not have enough permissions for us to sync
 
