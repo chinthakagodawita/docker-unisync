@@ -12,12 +12,28 @@ import (
 const UNISON_URL = "https://bintray.com/artifact/download/chinthakagodawita/generic/unison-2.48.3-boot2docker.1.tar.gz"
 
 func MachineSshUser(machine string) string {
-	out, err := RunMachineCommand("inspect", machine, "--format", "\"{{.Driver.SSHUser}}\"")
-	if err != nil {
-		LogError(err.Error())
+	machineInfo, machineErr := RunMachineCommand("inspect", machine)
+	if machineErr != nil {
+		LogError(machineErr.Error())
 	}
 
-	return strings.Trim(out, " \"\n")
+	infoJson, infoErr := gabs.ParseJSON([]byte(machineInfo))
+	if infoErr != nil {
+		LogError("could not load machine info from `docker-machine`.")
+	}
+
+	user, ok := infoJson.Path("Driver.Driver.SSHUser").Data().(string)
+	if ok {
+		return user
+	}
+
+	user, ok = infoJson.Path("Driver.SSHUser").Data().(string)
+
+	if !ok {
+		LogError("could not determine SSH user from `docker-machine`.")
+	}
+
+	return user
 }
 
 func MachineIp(machine string) string {
@@ -46,8 +62,14 @@ func MachineSshKey(machine string) string {
 		LogError("could not load machine info from `docker-machine`.")
 	}
 
+	// Docker Machine 0.5.1 has a direct key.
+	storepath, ok := infoJson.Path("Driver.Driver.SSHKeyPath").Data().(string)
+	if ok {
+		return storepath
+	}
+
 	// Docker Machine 0.5 has it in a sub-folder.
-	storepath, ok := infoJson.Path("Driver.StorePath").Data().(string)
+	storepath, ok = infoJson.Path("Driver.StorePath").Data().(string)
 	if ok {
 		return storepath + "/machines/" + infoJson.Path("Driver.MachineName").Data().(string) + "/id_rsa"
 	}
@@ -103,6 +125,8 @@ func RunMachineCommand(cmd ...string) (string, error) {
 		out    bytes.Buffer
 		stderr bytes.Buffer
 	)
+
+	// LogDebug("running: docker-machine " + strings.Join(cmd, " "))
 
 	dm := exec.Command("docker-machine", cmd...)
 	dm.Stdout = &out
